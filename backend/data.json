@@ -1,0 +1,70 @@
+{
+	"pegawai": [
+		{
+			"id": "444",
+			"nama": "Budi Santosa",
+			"alamat": "First",
+			"gaji": 5000000
+		},
+		{
+			"id": "555",
+			"nama": "Johan",
+			"alamat": "Sekip",
+			"gaji": 4500000
+		},
+		{
+			"id": "556",
+			"nama": "Agus Pratama",
+			"alamat": "Cempaka",
+			"gaji": 4800000
+		},
+		{
+			"id": "557",
+			"nama": "Siti Rahma",
+			"alamat": "Sukajadi",
+			"gaji": 5200000
+		},
+		{
+			"id": "558",
+			"nama": "Dewi Kartika",
+			"alamat": "Pahlawan",
+			"gaji": 4700000
+		},
+		{
+			"id": "559",
+			"nama": "Surya Wijaya",
+			"alamat": "Melati",
+			"gaji": 6000000
+		},
+		{
+			"id": "560",
+			"nama": "Anita Laras",
+			"alamat": "Kemuning",
+			"gaji": 4300000
+		},
+		{
+			"id": "561",
+			"nama": "Rizki Maulana",
+			"alamat": "Beringin",
+			"gaji": 5100000
+		},
+		{
+			"id": "562",
+			"nama": "Nanda Putra",
+			"alamat": "Rajawali",
+			"gaji": 5500000
+		},
+		{
+			"id": "563",
+			"nama": "Tina Amalia",
+			"alamat": "Anggrek",
+			"gaji": 4600000
+		},
+		{
+			"id": "564",
+			"nama": "Farhan Akbar",
+			"alamat": "Cendana",
+			"gaji": 4950000
+		}
+	]
+}

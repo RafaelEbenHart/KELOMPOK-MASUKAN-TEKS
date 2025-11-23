@@ -1,28 +1,45 @@
-/node_modules
-/dist
-/out-tsc
-/tmp
+# Node Modules
+node_modules/
+**/node_modules/
+
+# Build outputs
+dist/
+build/
+out-tsc/
+tmp/
+coverage/
+public/build/
+
+# Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 *.log
+logs/
+pids/
+*.pid
+
+# Environment
+.env
+*.env
+.local
+*.local
+
+# IDE / Editor
+.vscode/
+.idea/
 .DS_Store
 Thumbs.db
-.env
-.local
-config/local.env.js
-config/env.js.local
-/coverage
-/public/build
+
+# TypeScript
 *.tsbuildinfo
-/pids
-/logs
-*.pid
-*.seed
+
+# Databases
 *.sqlite
+*.seed
+
+# Bower
+bower_components/
+
+# Misc
 .nyc_output
-/bower_components
-/build
-.grunt
-.idea
-.vscode
