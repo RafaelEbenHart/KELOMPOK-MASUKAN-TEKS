@@ -182,22 +182,22 @@
 
 <main class="main">
   <div class="">
-    <h2 class="text-center">Data Pegawai</h2>
+    <h2 class="text-center">Data Peserta Kelas Bahasa Inggris</h2>
     <table border="1" cellpadding="8" cellspacing="0">
       <thead>
         <tr>
-          <th>ID</th>
+          <th>No</th>
           <th>Nama</th>
-          <th>Alamat</th>
-          <th>Gaji</th>
+          <th>Level</th>
+          <th>Jam Kelas</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let p of pegawai()">
           <td>{{ p.id }}</td>
           <td>{{ p.nama }}</td>
-          <td>{{ p.alamat }}</td>
-          <td>{{ p.gaji | currency : 'Rp. ' : 'symbol' : '1.0-0' }}</td>
+          <td>{{ p.level }}</td>
+          <td>{{ p.jam }}</td>
         </tr>
       </tbody>
     </table>
