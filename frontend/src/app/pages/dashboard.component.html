@@ -1,0 +1,23 @@
+  
+
+<div class="">
+    <h2 class="text-center">Data Peserta Kelas Bahasa Inggris</h2>
+    <table border="1" cellpadding="8" cellspacing="0">
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Nama</th>
+          <th>Level</th>
+          <th>Jam Kelas</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of pegawai()">
+          <td>{{ p.id }}</td>
+          <td>{{ p.nama }}</td>
+          <td>{{ p.level }}</td>
+          <td>{{ p.jam }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>

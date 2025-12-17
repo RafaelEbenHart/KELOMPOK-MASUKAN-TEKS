@@ -1,0 +1,41 @@
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+<div class="login-wrapper">
+  <div class="login-card">
+
+    <div class="login-header">
+      <h4>Login</h4>
+      <small>Login dulu bro biar bisa masuk</small>
+    </div>
+
+    <div class="login-body">
+
+      <label>Username</label>
+      <div class="input-box">
+        <i class="bi bi-person-fill"></i>
+        <input
+          type="text"
+          placeholder="Enter username"
+          [(ngModel)]="username">
+      </div>
+
+      <label>Password</label>
+      <div class="input-box">
+        <i class="bi bi-lock-fill"></i>
+        <input
+          type="password"
+          placeholder="Enter password"
+          [(ngModel)]="password">
+      </div>
+
+      <div class="error-text" *ngIf="error">
+        {{ error }}
+      </div>
+
+      <button class="login-btn" (click)="login()">
+        Login
+      </button>
+
+    </div>
+  </div>
+</div>
