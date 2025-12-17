@@ -1,4 +1,96 @@
-<main class="main">
-<router-outlet />
+<style>
+  /* Minimal theme - rely on Bootstrap for layout and components */
+  :host, body { font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; }
+  .logo-badge { width:40px; height:40px; border-radius:6px; background:#4d4d4d; display:inline-flex; align-items:center; justify-content:center; color:#fff; font-weight:700 }
+  .main-row { min-height: calc(100vh - 56px); }
+
+  /* logout confirmation modal */
+  .logout-overlay {
+    position: fixed;
+    inset: 0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background: rgba(0,0,0,0.45);
+    z-index: 1050;
+    animation: overlay-fade .18s ease-out;
+  }
+  @keyframes overlay-fade { from {opacity:0} to {opacity:1} }
+
+  .logout-modal {
+    width: 100%;
+    max-width: 420px;
+    background: #fff;
+    padding: 1.25rem;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    transform: translateY(8px) scale(.98);
+    opacity: 0;
+    animation: modal-in .18s ease-out forwards;
+    text-align: center;
+  }
+  .logout-modal h5 { margin-bottom: .25rem; font-weight:600; }
+  .logout-modal p { margin-bottom: 1rem; color: #444; }
+  @keyframes modal-in { to { transform: none; opacity: 1 } }
+
+  /* routed content entrance dissolve animation */
+  .card-body.page-enter {
+    animation: page-enter .36s cubic-bezier(.2,.9,.3,1) both;
+  }
+  @keyframes page-enter {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: none; }
+  }
+</style>
+
+
+
+<header class="navbar navbar-dark" style="background-color: #4d4d4d; position: relative; z-index: 3;">
+  <div class="container-fluid">
+    <a class="navbar-brand d-flex align-items-center" href="#">
+      <img src="/logoTeks.png" alt="Masukan Teks" class="me-2" style="width:40px;height:40px;object-fit:cover;border-radius:6px" />
+      <span class="ms-1">Masukan Teks</span>
+    </a>
+
+    <!-- <div class="d-none d-md-flex">
+      <a class="nav-link text-light d-inline-block" routerLink="/dashboard">Masukan text</a>
+      <a class="nav-link text-light d-inline-block" routerLink="/login">Login</a>
+    </div> -->
+  </div>
+</header>
+
+<!-- logout confirmation modal -->
+<div *ngIf="showLogoutConfirm" class="logout-overlay" (click)="cancelLogout()">
+  <div class="logout-modal" (click)="$event.stopPropagation()">
+    <h5>Confirm Logout</h5>
+    <p>Are you sure you want to logout?</p>
+    <div class="d-flex gap-2 justify-content-center">
+      <button class="btn btn-secondary" (click)="cancelLogout()">Cancel</button>
+      <button class="btn btn-danger" (click)="confirmLogout()">Logout</button>
+    </div>
+  </div>
+</div>
+
+<main class="container-fluid">
+  <div class="row main-row">
+    <aside *ngIf="showSidebar" class="col-12 col-md-2 col-lg-2 text-white py-3" style="background-color: #4d4d4d;">
+      <nav class="nav flex-column px-2 small" style="font-size: 1.05rem;">
+        <a class="nav-link text-white py-2" routerLink="/dashboard">Masukan teks</a>
+        <a class="nav-link text-white py-2" routerLink="/dashboard">Masukan teks</a>
+        <a class="nav-link text-white py-2" routerLink="/dashboard">Masukan teks</a>
+        <a class="nav-link text-white py-2" routerLink="/dashboard">Masukan teks</a>
+        <div class="mt-3">
+          <a class="nav-link text-white py-2" *ngIf="isAuthenticated()" (click)="openLogoutConfirm()" style="cursor:pointer">Logout</a>
+        </div>
+      </nav>
+    </aside>
+
+    <section class="col py-3">
+          <div class="card-body d-flex flex-column" [class.page-enter]="animateRoute" style="min-height: calc(100vh - 120px); overflow:auto;">
+            <!-- routed components render inside this card -->
+            <router-outlet></router-outlet>
+          </div>
+    </section>
+  </div>
 </main>
 

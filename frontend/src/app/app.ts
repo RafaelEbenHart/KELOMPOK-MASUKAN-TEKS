@@ -1,6 +1,7 @@
 import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -12,18 +13,45 @@ import { CommonModule } from '@angular/common';
 export class App {
   pegawai = signal<any[]>([]);
 
-  constructor() {
-    this.loadPegawai();
+  // UI state used by template
+  showSidebar = true;
+  showLoginWarning = false;
+  animateRoute = false;
+  showLogoutConfirm = false;
+
+  constructor(private router: Router, private auth: AuthService) {
+
+    // update UI state on navigation events
+    this.router.events.subscribe((e) => {
+      if (e instanceof NavigationEnd) {
+        const url = e.urlAfterRedirects || e.url;
+        this.showSidebar = !url.startsWith('/login');
+        this.showLoginWarning = url.startsWith('/login');
+
+        // trigger entrance animation for routed content
+        this.animateRoute = true;
+        // duration slightly longer than CSS to ensure it completes
+        setTimeout(() => (this.animateRoute = false), 420);
+      }
+    });
   }
 
-  async loadPegawai() {
-    try {
-      const res = await fetch('http://localhost:3000/api/pegawai');
-      const data = await res.json();
-      this.pegawai.set(data.pegawai);
-      console.log('Data pegawai: ', this.pegawai());
-    } catch (e) {
-      console.error('Gagal mengambil data pegawai:', e);
-    }
+  isAuthenticated() {
+    return this.auth.isAuthenticated();
   }
+
+  openLogoutConfirm() {
+    this.showLogoutConfirm = true;
+  }
+
+  cancelLogout() {
+    this.showLogoutConfirm = false;
+  }
+
+  confirmLogout() {
+    this.auth.logout();
+    this.showLogoutConfirm = false;
+    this.router.navigateByUrl('/login');
+  }
+
 }
