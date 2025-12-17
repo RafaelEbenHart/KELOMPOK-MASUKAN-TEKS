@@ -75,10 +75,10 @@
   <div class="row main-row">
     <aside *ngIf="showSidebar" class="col-12 col-md-2 col-lg-2 text-white py-3" style="background-color: #4d4d4d;">
       <nav class="nav flex-column px-2 small" style="font-size: 1.05rem;">
-        <a class="nav-link text-white py-2" routerLink="/dashboard">Masukan teks</a>
-        <a class="nav-link text-white py-2" routerLink="/dashboard">Masukan teks</a>
-        <a class="nav-link text-white py-2" routerLink="/dashboard">Masukan teks</a>
-        <a class="nav-link text-white py-2" routerLink="/dashboard">Masukan teks</a>
+        <a class="nav-link text-white py-2" routerLink="/kelas" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Kelas</a>
+        <a class="nav-link text-white py-2" routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Masukan teks</a>
+        <a class="nav-link text-white py-2" routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Masukan teks</a>
+        <a class="nav-link text-white py-2" routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Masukan teks</a>
         <div class="mt-3">
           <a class="nav-link text-white py-2" *ngIf="isAuthenticated()" (click)="openLogoutConfirm()" style="cursor:pointer">Logout</a>
         </div>
