@@ -19,7 +19,7 @@ import { Router } from '@angular/router';
 
       <div class="row g-3 mt-3">
         <div class="col-12 col-md-6" *ngFor="let k of kelasList">
-          <div class="card h-100">
+          <div class="card h-100" (click)="openKelas(k._id)" style="cursor: pointer;">
             <div class="card-body">
               <h5 class="card-title">{{ k.nama_kelas }}</h5>
               <h6 class="card-subtitle mb-2 text-muted">Ruangan: {{ k.ruangan }}</h6>
@@ -28,8 +28,8 @@ import { Router } from '@angular/router';
               <p class="small text-muted">Dibuat: {{ k.createdAt | date:'medium' }}</p>
             </div>
             <div *ngIf="isAdmin()" class="card-footer bg-transparent border-0 d-flex gap-2">
-              <button class="btn btn-sm btn-outline-primary" (click)="editKelas(k._id)">✏️ Edit</button>
-              <button class="btn btn-sm btn-outline-danger" (click)="deleteKelas(k._id)">🗑️ Hapus</button>
+              <button class="btn btn-sm btn-outline-primary" (click)="editKelas(k._id); $event.stopPropagation();">✏️ Edit</button>
+              <button class="btn btn-sm btn-outline-danger" (click)="requestDelete(k._id); $event.stopPropagation();">🗑️ Hapus</button>
             </div>
           </div>
         </div>
@@ -108,16 +108,30 @@ export class KelasComponent implements OnInit {
   }
 
   editKelas(id: string) {
-    this.router.navigate(['/kelas'], { queryParams: { edit: id } });
+    this.router.navigate(['/kelas', id, 'edit']);
   }
 
-  deleteKelas(id: string) {
-    if (!confirm('Hapus kelas ini?')) return;
-    const token = this.auth.getToken();
-    const headers = token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : undefined as any;
-    this.http.delete(`${this.BASE}/${id}`, { headers }).subscribe({
-      next: () => this.fetchKelas(),
-      error: (err) => alert(err?.error?.message || 'Gagal menghapus kelas')
-    });
+  openKelas(id: string) {
+    this.router.navigate(['/kelas', id]);
+  }
+
+  // delete request is delegated to global confirm modal via custom event
+  requestDelete(id: string) {
+    const onConfirm = () => {
+      const token = this.auth.getToken();
+      const headers = token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : undefined as any;
+      this.http.delete(`${this.BASE}/${id}`, { headers }).subscribe({
+        next: () => this.fetchKelas(),
+        error: (err) => alert(err?.error?.message || 'Gagal menghapus kelas')
+      });
+    };
+
+    window.dispatchEvent(new CustomEvent('km:confirm', {
+      detail: {
+        title: 'Konfirmasi Hapus',
+        message: 'Apakah Anda yakin ingin menghapus kelas ini?',
+        onConfirm
+      }
+    }));
   }
 }

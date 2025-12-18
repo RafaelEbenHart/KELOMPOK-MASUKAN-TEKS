@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { RouterOutlet, Router, NavigationEnd, RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterOutlet, Router, NavigationEnd, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from './services/auth.service';
 import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
@@ -7,7 +7,7 @@ import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http'
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule, HttpClientModule],
+  imports: [RouterOutlet, RouterLink, CommonModule, HttpClientModule],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
@@ -18,6 +18,12 @@ export class App {
   showLoginWarning = false;
   animateRoute = false;
   showLogoutConfirm = false;
+
+  // Global confirm modal (used by child components via event)
+  showGlobalConfirm = false;
+  globalConfirmTitle = '';
+  globalConfirmMessage = '';
+  private globalConfirmAction: (() => void) | null = null;
 
   // lists for sidebar dropdowns
   kelasList: any[] = [];
@@ -47,6 +53,16 @@ export class App {
       this.fetchKelas();
       this.fetchSiswa();
     }
+
+    // listen for global confirm requests from child components
+    window.addEventListener('km:confirm', (ev: Event) => {
+      const d = (ev as CustomEvent).detail || {};
+      // d: { title, message, onConfirm }
+      this.showGlobalConfirm = true;
+      this.globalConfirmTitle = d.title || 'Konfirmasi';
+      this.globalConfirmMessage = d.message || '';
+      this.globalConfirmAction = d.onConfirm || null;
+    });
   }
 
   isAuthenticated() {
@@ -116,6 +132,25 @@ export class App {
     this.auth.logout();
     this.showLogoutConfirm = false;
     this.router.navigateByUrl('/login');
+  }
+
+  // Global confirm modal handlers
+  cancelGlobalConfirm() {
+    this.showGlobalConfirm = false;
+    this.globalConfirmTitle = '';
+    this.globalConfirmMessage = '';
+    this.globalConfirmAction = null;
+  }
+
+  confirmGlobal() {
+    if (this.globalConfirmAction) {
+      try {
+        this.globalConfirmAction();
+      } catch (e) {
+        console.error('Error executing global confirm action', e);
+      }
+    }
+    this.cancelGlobalConfirm();
   }
 
   // Actions exposed to template

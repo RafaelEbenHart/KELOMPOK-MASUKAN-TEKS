@@ -65,8 +65,8 @@ import { AuthService } from '../services/auth.service';
   ]
 })
 export class LoginComponent {
-  email = '';
-  password = '';
+  email = 'epan@gmail.com';
+  password = '12345678';
   error: any = null;
   loading = false;
 
