@@ -47,10 +47,12 @@
 
 <header class="navbar navbar-dark" style="background-color: #4d4d4d; position: relative; z-index: 3;">
   <div class="container-fluid">
-    <a class="navbar-brand d-flex align-items-center" href="#">
+    <a class="navbar-brand d-flex align-items-center" href="#" (click)="$event.preventDefault()">
       <img src="/logoTeks.png" alt="Masukan Teks" class="me-2" style="width:40px;height:40px;object-fit:cover;border-radius:6px" />
       <span class="ms-1">Masukan Teks</span>
     </a>
+
+
 
     <!-- <div class="d-none d-md-flex">
       <a class="nav-link text-light d-inline-block" routerLink="/dashboard">Masukan text</a>
@@ -62,10 +64,10 @@
 <!-- logout confirmation modal -->
 <div *ngIf="showLogoutConfirm" class="logout-overlay" (click)="cancelLogout()">
   <div class="logout-modal" (click)="$event.stopPropagation()">
-    <h5>Confirm Logout</h5>
-    <p>Are you sure you want to logout?</p>
+    <h5>Konfirmasi Logout</h5>
+    <p>Apakah Anda yakin ingin keluar dari aplikasi?</p>
     <div class="d-flex gap-2 justify-content-center">
-      <button class="btn btn-secondary" (click)="cancelLogout()">Cancel</button>
+      <button class="btn btn-secondary" (click)="cancelLogout()">Batal</button>
       <button class="btn btn-danger" (click)="confirmLogout()">Logout</button>
     </div>
   </div>
@@ -73,23 +75,52 @@
 
 <main class="container-fluid">
   <div class="row main-row">
-    <aside *ngIf="showSidebar" class="col-12 col-md-2 col-lg-2 text-white py-3" style="background-color: #4d4d4d;">
+    <aside *ngIf="showSidebar" class="col-12 col-md-2 col-lg-2 text-white py-3 d-flex flex-column" style="background-color: #4d4d4d;">
       <nav class="nav flex-column px-2 small" style="font-size: 1.05rem;">
-        <a class="nav-link text-white py-2" routerLink="/kelas" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Kelas</a>
-        <a class="nav-link text-white py-2" routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Masukan teks</a>
-        <a class="nav-link text-white py-2" routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Masukan teks</a>
-        <a class="nav-link text-white py-2" routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Masukan teks</a>
-        <div class="mt-3">
-          <a class="nav-link text-white py-2" *ngIf="isAuthenticated()" (click)="openLogoutConfirm()" style="cursor:pointer">Logout</a>
+
+        <!-- Kelas dropdown -->
+        <div>
+          <a class="nav-link text-white py-2" data-bs-toggle="collapse" href="#kelasCollapse" role="button" aria-expanded="false" aria-controls="kelasCollapse">
+            Kelas
+          </a>
+
+          <div class="collapse" id="kelasCollapse">
+            <ul class="list-unstyled small ps-3 mb-0">
+              <li class="mt-2"><a class="nav-link text-white py-1" [routerLink]="['/kelas']">List Kelas</a></li>
+              <li *ngIf="isAdmin()" class="mt-1"><a class="nav-link text-white py-1" [routerLink]="['/kelas/add']">Tambah Kelas</a></li>
+            </ul>
+          </div>
         </div>
+
+        <!-- Siswa dropdown -->
+        <div class="mt-2">
+          <a class="nav-link text-white py-2" data-bs-toggle="collapse" href="#siswaCollapse" role="button" aria-expanded="false" aria-controls="siswaCollapse">
+            Siswa
+          </a>
+
+          <div class="collapse" id="siswaCollapse">
+            <ul class="list-unstyled small ps-3 mb-0">
+              <li class="mt-2"><a class="nav-link text-white py-1" [routerLink]="['/siswa']">List Siswa</a></li>
+              <li *ngIf="isAdmin()" class="mt-1"><a class="nav-link text-white py-1" [routerLink]="['/siswa/add']">Tambah Siswa</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="mt-auto">
+          <a *ngIf="isAuthenticated()" class="nav-link text-white py-2" style="cursor:pointer" (click)="openLogoutConfirm()">Logout</a>
+        </div>
+
       </nav>
     </aside>
 
     <section class="col py-3">
-          <div class="card-body d-flex flex-column" [class.page-enter]="animateRoute" style="min-height: calc(100vh - 120px); overflow:auto;">
-            <!-- routed components render inside this card -->
-            <router-outlet></router-outlet>
-          </div>
+
+
+
+      <div class="card-body d-flex flex-column" [class.page-enter]="animateRoute" style="min-height: calc(100vh - 120px); overflow:auto;">
+        <!-- routed components render inside this card -->
+        <router-outlet></router-outlet>
+      </div>
     </section>
   </div>
 </main>
