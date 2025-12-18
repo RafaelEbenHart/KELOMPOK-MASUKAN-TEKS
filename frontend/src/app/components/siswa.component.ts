@@ -17,7 +17,7 @@ import { FormsModule } from '@angular/forms';
       <div class="d-flex justify-content-center mb-3">
         <div class="w-50">
           <select class="form-select" [(ngModel)]="selectedKelas" (ngModelChange)="applyFilter()">
-            <option value="">Semua Kelas</option>
+            <option *ngIf="isAdmin()" value="">Semua Kelas</option>
             <option *ngFor="let k of kelasList" [value]="k._id">{{ k.nama_kelas }}</option>
           </select>
         </div>
@@ -77,11 +77,17 @@ export class SiswaComponent implements OnInit {
 
           if (role === 'admin') {
             this.kelasList = res || [];
+            // admin keeps the "Semua Kelas" option (selectedKelas can be empty)
           } else if (role === 'pengajar' && userId) {
             this.kelasList = (res || []).filter(k => {
               const pid = k.pengajar_id?._id || k.pengajar_id;
               return pid && pid === userId;
             });
+            // default select the first kelas for pengajar (no "Semua Kelas" option)
+            if (!this.selectedKelas && this.kelasList.length > 0) {
+              this.selectedKelas = this.kelasList[0]._id;
+              this.applyFilter();
+            }
           } else {
             this.kelasList = [];
           }
