@@ -2,6 +2,7 @@ import express from "express";
 import * as siswaController from "../controllers/siswaController.js";
 import { auth } from "../middlewares/authMiddleware.js";
 import { isAdmin } from "../middlewares/roleMiddleware.js";
+import { uploadSiswa } from "../middlewares/uploadMiddleware.js";
 
 const router = express.Router();
 
@@ -10,8 +11,8 @@ router.get("/", auth, siswaController.getAllSiswa);
 router.get("/:id", auth, siswaController.getSiswaById);
 
 // CRUD (ADMIN ONLY)
-router.post("/", auth, isAdmin, siswaController.createSiswa);
-router.put("/:id", auth, isAdmin, siswaController.updateSiswa);
+router.post("/", auth, isAdmin, uploadSiswa.single("gambar"), siswaController.createSiswa);
+router.put("/:id", auth, isAdmin, uploadSiswa.single("gambar"), siswaController.updateSiswa);
 router.delete("/:id", auth, isAdmin, siswaController.deleteSiswa);
 
 export default router;

@@ -17,6 +17,9 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }))
 
+// serve uploads (images, files)
+app.use('/uploads', express.static('uploads'));
+
 // ROUTES
 app.use("/api/users", userRoutes);
 app.use("/api/siswa", siswaRoutes);
