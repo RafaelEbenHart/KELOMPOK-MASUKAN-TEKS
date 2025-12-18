@@ -1,7 +1,7 @@
 import {
   Title
-} from "./chunk-754BW65A.js";
-import "./chunk-YIM3TNOW.js";
+} from "./chunk-LLOVNKEK.js";
+import "./chunk-BQIQD6T5.js";
 import {
   HashLocationStrategy,
   LOCATION_INITIALIZED,
@@ -9,7 +9,7 @@ import {
   LocationStrategy,
   PathLocationStrategy,
   ViewportScroller
-} from "./chunk-UO3VZI37.js";
+} from "./chunk-VR2PSS4Q.js";
 import "./chunk-APPCZKFW.js";
 import {
   APP_BOOTSTRAP_LISTENER,
@@ -84,7 +84,7 @@ import {
   ɵɵloadQuery,
   ɵɵqueryRefresh,
   ɵɵsanitizeUrlOrResourceUrl
-} from "./chunk-KVLC47DY.js";
+} from "./chunk-H7LIGA5Y.js";
 import {
   defer,
   isObservable
@@ -127,7 +127,7 @@ import {
   __async,
   __spreadProps,
   __spreadValues
-} from "./chunk-WDMUDEB6.js";
+} from "./chunk-TXDUYLVM.js";
 
 // node_modules/@angular/router/fesm2022/router2.mjs
 var PRIMARY_OUTLET = "primary";
@@ -4744,7 +4744,7 @@ var Router = class _Router {
     try {
       return this.urlSerializer.parse(url);
     } catch (e) {
-      this.console.warn(formatRuntimeError(4018, ngDevMode && `Error parsing URL ${url}. Falling back to '/' instead.
+      this.console.warn(formatRuntimeError(4018, ngDevMode && `Error parsing URL ${url}. Falling back to '/' instead. 
 ` + e));
       return this.urlSerializer.parse("/");
     }
