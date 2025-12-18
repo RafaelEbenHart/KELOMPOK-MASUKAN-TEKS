@@ -1,8 +1,12 @@
 <style>
   /* Minimal theme - rely on Bootstrap for layout and components */
+  html, :host, body { overflow-x: hidden; }
   :host, body { font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; }
   .logo-badge { width:40px; height:40px; border-radius:6px; background:#4d4d4d; display:inline-flex; align-items:center; justify-content:center; color:#fff; font-weight:700 }
-  .main-row { min-height: calc(100vh - 56px); }
+  .main-row { min-height: calc(100vh - 56px); overflow-x: hidden; }
+
+  /* Ensure routed content and global containers don't cause horizontal scroll */
+  main, .card-body, .container-fluid { overflow-x: hidden; }
 
   /* logout confirmation modal */
   .logout-overlay {
@@ -90,7 +94,11 @@
     <aside *ngIf="showSidebar" class="col-12 col-md-2 col-lg-2 text-white py-3 d-flex flex-column" style="background-color: #4d4d4d;">
       <nav class="nav flex-column px-2 small" style="font-size: 1.05rem;">
 
-        <!-- Kelas dropdown -->
+        <div>
+          <a class="nav-link text-white py-2" [routerLink]="['/dashboard']" *ngIf="isAuthenticated()">Dashboard</a>
+      </div>
+
+      <!-- Kelas dropdown -->
         <div>
           <a class="nav-link text-white py-2" data-bs-toggle="collapse" href="#kelasCollapse" role="button" aria-expanded="false" aria-controls="kelasCollapse">
             Kelas
@@ -114,6 +122,20 @@
             <ul class="list-unstyled small ps-3 mb-0">
               <li class="mt-2"><a class="nav-link text-white py-1" [routerLink]="['/siswa']">List Siswa</a></li>
               <li *ngIf="isAdmin()" class="mt-1"><a class="nav-link text-white py-1" [routerLink]="['/siswa/add']">Tambah Siswa</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Pengajar dropdown (admin only) -->
+        <div *ngIf="isAdmin()" class="mt-2">
+          <a class="nav-link text-white py-2" data-bs-toggle="collapse" href="#pengajarCollapse" role="button" aria-expanded="false" aria-controls="pengajarCollapse">
+            Pengajar
+          </a>
+
+          <div class="collapse" id="pengajarCollapse">
+            <ul class="list-unstyled small ps-3 mb-0">
+              <li class="mt-2"><a class="nav-link text-white py-1" [routerLink]="['/pengajar']">List Pengajar</a></li>
+              <li class="mt-1"><a class="nav-link text-white py-1" [routerLink]="['/pengajar/add']">Tambah Pengajar</a></li>
             </ul>
           </div>
         </div>

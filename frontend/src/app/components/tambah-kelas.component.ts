@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders, HttpClientModule } from '@angular/common/http';
@@ -20,8 +20,21 @@ import { Router } from '@angular/router';
         </div>
         <div class="mb-3">
           <label class="form-label">Ruangan</label>
-          <input class="form-control" [(ngModel)]="form.ruangan" name="ruangan" />
+          <select class="form-select" [(ngModel)]="form.ruangan" name="ruangan" required>
+            <option value="">Pilih Ruangan</option>
+            <option *ngFor="let r of ruanganOptions" [value]="r">{{ r }}</option>
+          </select>
         </div>
+
+        <div class="mb-3">
+          <label class="form-label">Pengajar</label>
+          <select class="form-select" [(ngModel)]="form.pengajar_id" name="pengajar_id" required>
+            <option value="">Pilih pengajar</option>
+            <option *ngFor="let p of pengajarList" [value]="p._id">{{ p.name || p.email }}</option>
+          </select>
+          <div *ngIf="pengajarList.length === 0" class="form-text text-muted">Belum ada pengajar terdaftar.</div>
+        </div>
+
         <div class="mb-3">
           <label class="form-label">Deskripsi</label>
           <textarea class="form-control" [(ngModel)]="form.deskripsi" name="deskripsi"></textarea>
@@ -37,8 +50,11 @@ import { Router } from '@angular/router';
     </div>
   `
 })
-export class TambahKelasComponent {
-  form: any = { nama_kelas: '', ruangan: '', deskripsi: '' };
+export class TambahKelasComponent implements OnInit {
+  form: any = { nama_kelas: '', ruangan: '', deskripsi: '', pengajar_id: '' };
+  pengajarList: any[] = [];
+  // allowed rooms: 1A-5A, 1B-5B, 1C-5C
+  ruanganOptions: string[] = Array.from({ length: 5 }, (_, i) => `${i+1}A`).concat(Array.from({ length: 5 }, (_, i) => `${i+1}B`), Array.from({ length: 5 }, (_, i) => `${i+1}C`));
   loading = false;
   error: string | null = null;
 
@@ -46,8 +62,18 @@ export class TambahKelasComponent {
 
   constructor(private http: HttpClient, private auth: AuthService, private router: Router) {}
 
+  ngOnInit() {
+    // fetch pengajar list
+    const token = this.auth.getToken();
+    const headers = token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : undefined as any;
+    this.http.get<any[]>(`http://localhost:5000/api/users`, { headers }).subscribe({
+      next: (res) => { this.pengajarList = (res || []).filter(u => (u.role || '').toLowerCase() === 'pengajar'); },
+      error: (err) => { console.error('Failed fetching pengajar list', err); }
+    });
+  }
+
   submit() {
-    if (!this.form.nama_kelas) return;
+    if (!this.form.nama_kelas || !this.form.pengajar_id) return;
     this.loading = true;
     const token = this.auth.getToken();
     const headers = token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : undefined as any;
