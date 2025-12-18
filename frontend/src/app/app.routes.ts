@@ -5,7 +5,8 @@ import { KelasComponent } from './components/kelas.component';
 import { SiswaComponent } from './components/siswa.component';
 import { TambahKelasComponent } from './components/tambah-kelas.component';
 import { TambahSiswaComponent } from './components/tambah-siswa.component';
-import { KelasDetailComponent } from './components/kelas-detail.component';
+import { EditSiswaComponent } from './components/edit-siswa.component';import { PengajarComponent } from './components/pengajar.component';
+import { TambahPengajarComponent } from './components/tambah-pengajar.component';import { KelasDetailComponent } from './components/kelas-detail.component';
 import { EditKelasComponent } from './components/edit-kelas.component';
 import { TambahJadwalComponent } from './components/tambah-jadwal.component';
 import { TambahMateriComponent } from './components/tambah-materi.component';
@@ -23,6 +24,9 @@ export const routes: Routes = [
   { path: 'kelas/:id', component: KelasDetailComponent, canActivate: [AuthGuard] },
   { path: 'siswa', component: SiswaComponent, canActivate: [AuthGuard] },
   { path: 'siswa/add', component: TambahSiswaComponent, canActivate: [AuthGuard] },
+  { path: 'siswa/:id/edit', component: EditSiswaComponent, canActivate: [AuthGuard] },
+  { path: 'pengajar', component: PengajarComponent, canActivate: [AuthGuard] },
+  { path: 'pengajar/add', component: TambahPengajarComponent, canActivate: [AuthGuard] },
   // fallback to login for unknown routes
   { path: '**', redirectTo: '/login' }
 ];

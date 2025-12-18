@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
   standalone: true,
   imports: [CommonModule, HttpClientModule],
   template: `
-    <div class="py-4">
+    <div class="py-4 kelas-root">
       <h1 class="mb-3 text-center">Kelas</h1>
 
       <div *ngIf="loading" class="text-center">Loading...</div>
@@ -38,8 +38,12 @@ import { Router } from '@angular/router';
   `,
   styles: [
     `
+    /* Prevent horizontal overflow in Kelas page */
+    .kelas-root { overflow-x: hidden; }
+    .row { overflow-x: hidden; }
     .lead { color: #444; }
-    .card { border-radius: 8px; }
+    .card { border-radius: 8px; min-width: 0; }
+    .col-12, .card-body { min-width: 0; }
     `
   ]
 })

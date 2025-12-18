@@ -26,6 +26,20 @@ export const getSiswaById = async (req, res) => {
 export const createSiswa = async (req, res) => {
   try {
     const data = { ...req.body };
+
+    // normalize kelas: accept JSON string, single id string, or array
+    if (data.kelas) {
+      try {
+        if (typeof data.kelas === 'string') {
+          const parsed = JSON.parse(data.kelas);
+          data.kelas = Array.isArray(parsed) ? parsed : [data.kelas];
+        }
+      } catch (e) {
+        // not JSON, treat as single id
+        data.kelas = [data.kelas];
+      }
+    }
+
     if (req.file) {
       data.gambar = req.file.path;
     }
@@ -43,6 +57,19 @@ export const updateSiswa = async (req, res) => {
     if (!siswaBefore) return res.status(404).json({ message: "Siswa tidak ditemukan" });
 
     const updateData = { ...req.body };
+
+    // normalize kelas if provided
+    if (updateData.kelas) {
+      try {
+        if (typeof updateData.kelas === 'string') {
+          const parsed = JSON.parse(updateData.kelas);
+          updateData.kelas = Array.isArray(parsed) ? parsed : [updateData.kelas];
+        }
+      } catch (e) {
+        updateData.kelas = [updateData.kelas];
+      }
+    }
+
     if (req.file) {
       // hapus gambar lama jika ada
       if (siswaBefore.gambar && fs.existsSync(siswaBefore.gambar)) {

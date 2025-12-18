@@ -29,7 +29,10 @@ import { AuthService } from '../services/auth.service';
 
           <div class="mb-3">
             <label class="form-label">Ruangan</label>
-            <input class="form-control" [(ngModel)]="model.ruangan" name="ruangan" />
+            <select class="form-select" [(ngModel)]="model.ruangan" name="ruangan" required>
+              <option value="">Pilih Ruangan</option>
+              <option *ngFor="let r of ruanganOptions" [value]="r">{{ r }}</option>
+            </select>
           </div>
 
           <div class="mb-3">
@@ -54,6 +57,8 @@ import { AuthService } from '../services/auth.service';
 export class EditKelasComponent implements OnInit {
   model: any = { nama_kelas: '', ruangan: '', deskripsi: '', pengajar_id: '' };
   pengajarList: any[] = [];
+  // allowed rooms: 1A-5A, 1B-5B, 1C-5C
+  ruanganOptions: string[] = Array.from({ length: 5 }, (_, i) => `${i+1}A`).concat(Array.from({ length: 5 }, (_, i) => `${i+1}B`), Array.from({ length: 5 }, (_, i) => `${i+1}C`));
   loading = false;
   saving = false;
   error: string | null = null;

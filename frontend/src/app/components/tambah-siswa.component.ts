@@ -46,6 +46,14 @@ import { Router } from '@angular/router';
           </select>
         </div>
 
+        <div class="mb-3">
+          <label class="form-label">Foto (opsional)</label>
+          <input type="file" accept="image/*" (change)="onFile($event)" class="form-control" />
+          <div *ngIf="imagePreview" class="mt-2">
+            <img [src]="imagePreview" alt="Preview" style="max-height:120px; max-width:100%;" />
+          </div>
+        </div>
+
         <div class="d-flex gap-2">
           <button class="btn btn-primary" [disabled]="loading">Simpan</button>
           <a class="btn btn-secondary" (click)="cancel()">Batal</a>
@@ -58,6 +66,8 @@ import { Router } from '@angular/router';
 })
 export class TambahSiswaComponent implements OnInit {
   form: any = { nama: '', alamat: '', jenis_kelamin: '', tanggal_lahir: '', kelas: '' };
+  file: File | null = null;
+  imagePreview: string | null = null;
   loading = false;
   error: string | null = null;
 
@@ -101,17 +111,38 @@ export class TambahSiswaComponent implements OnInit {
     });
   }
 
+  onFile(e: any) {
+    const f = e.target.files && e.target.files[0];
+    if (f) {
+      this.file = f;
+      // preview
+      const reader = new FileReader();
+      reader.onload = (ev: any) => (this.imagePreview = ev.target.result);
+      reader.readAsDataURL(f);
+    } else {
+      this.file = null;
+      this.imagePreview = null;
+    }
+  }
+
   submit() {
     if (!this.form.nama) return;
     this.loading = true;
     const token = this.auth.getToken();
     const headers = token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : undefined as any;
 
-    // if kelas selected, send as array (backend expects kelas as array)
-    const payload: any = { ...this.form };
-    if (payload.kelas) payload.kelas = [payload.kelas];
+    const fd = new FormData();
+    fd.append('nama', this.form.nama);
+    fd.append('alamat', this.form.alamat || '');
+    fd.append('jenis_kelamin', this.form.jenis_kelamin || '');
+    fd.append('tanggal_lahir', this.form.tanggal_lahir || '');
 
-    this.http.post(this.BASE, payload, { headers }).subscribe({
+    // send kelas as array string to keep backend compatibility
+    if (this.form.kelas) fd.append('kelas', JSON.stringify([this.form.kelas]));
+
+    if (this.file) fd.append('gambar', this.file);
+
+    this.http.post(this.BASE, fd, { headers }).subscribe({
       next: () => {
         this.loading = false;
         this.router.navigate(['/siswa']);
