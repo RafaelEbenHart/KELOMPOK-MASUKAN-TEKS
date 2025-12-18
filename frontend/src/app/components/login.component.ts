@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -10,6 +10,7 @@ import { AuthService } from '../services/auth.service';
   imports: [CommonModule, FormsModule],
   template: `
     <div class="login-bg d-flex align-items-center justify-content-center">
+      <div #snowRoot class="snow-overlay" aria-hidden="true"></div>
       <div class="login-panel text-dark">
         <h2 class="text-center mb-3">Welcome</h2>
 
@@ -50,9 +51,13 @@ import { AuthService } from '../services/auth.service';
       justify-content: center;
       z-index: 0;
     }
+
+    /* snow overlay inside login-bg */
+    .snow-overlay { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+
     .login-panel {
       position: relative;
-      z-index: 1; /* ensure panel sits above the background */
+      z-index: 1; /* ensure panel sits above the background and snow */
       width: 100%;
       max-width: 420px;
       background: rgba(255, 255, 255, 0.75);
@@ -64,13 +69,138 @@ import { AuthService } from '../services/auth.service';
     `
   ]
 })
-export class LoginComponent {
+export class LoginComponent implements AfterViewInit, OnDestroy {
+  @ViewChild('snowRoot', { static: false }) snowRoot!: ElementRef<HTMLDivElement>;
+
   email = 'epan@gmail.com';
   password = '12345678';
   error: any = null;
   loading = false;
 
+  private _reactRoot: any = null;
+  private _canvas?: HTMLCanvasElement;
+  private _snowRafId?: number;
+  private _particles: Array<any> = [];
+  private _onResizeHandler: any = null;
+
   constructor(private auth: AuthService, private router: Router) {}
+
+  ngAfterViewInit(): void {
+    if (typeof window === 'undefined' || !this.snowRoot) return;
+    console.debug('LoginComponent: initializing snow overlay');
+
+    (async () => {
+      try {
+        const React = await import('react');
+        const ReactDOMClient = await import('react-dom/client');
+        const SnowModule = await import('react-snowfall');
+        const Snow = (SnowModule && (SnowModule.default || SnowModule)) as any;
+
+        if (!React || !ReactDOMClient || !Snow) throw new Error('React or Snow module missing');
+
+        const root = ReactDOMClient.createRoot(this.snowRoot.nativeElement);
+        root.render(React.createElement(Snow, { color: '#ffffff', snowflakeCount: 90 }));
+        this._reactRoot = root;
+        console.debug('LoginComponent: mounted react-snowfall');
+      } catch (e) {
+        console.warn('Failed to initialize react-snowfall, falling back to canvas', e);
+        this._initCanvasSnow();
+      }
+    })();
+  }
+
+  ngOnDestroy(): void {
+    if (this._reactRoot && typeof this._reactRoot.unmount === 'function') {
+      try { this._reactRoot.unmount(); } catch (e) { /* ignore */ }
+      this._reactRoot = null;
+    }
+    this._destroyCanvasSnow();
+  }
+
+  // Canvas-based snow fallback
+  private _initCanvasSnow() {
+    try {
+      const el = this.snowRoot?.nativeElement;
+      if (!el) return;
+
+      const canvas = document.createElement('canvas');
+      canvas.style.width = '100%';
+      canvas.style.height = '100%';
+      canvas.style.display = 'block';
+      canvas.style.pointerEvents = 'none';
+      canvas.width = el.clientWidth;
+      canvas.height = el.clientHeight;
+      el.appendChild(canvas);
+      this._canvas = canvas;
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      const count = 90;
+      this._particles = [];
+      for (let i = 0; i < count; i++) {
+        this._particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: 1 + Math.random() * 3,
+          speed: 0.5 + Math.random() * 1.5,
+          drift: -0.5 + Math.random() * 1
+        });
+      }
+
+      const render = () => {
+        if (!this._canvas) return;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#ffffff';
+        ctx.globalAlpha = 0.9;
+        for (const p of this._particles) {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fill();
+          p.y += p.speed;
+          p.x += p.drift;
+
+          if (p.y > canvas.height + 10) {
+            p.y = -10;
+            p.x = Math.random() * canvas.width;
+          }
+          if (p.x < -20) p.x = canvas.width + 20;
+          if (p.x > canvas.width + 20) p.x = -20;
+        }
+        this._snowRafId = requestAnimationFrame(render);
+      };
+
+      // resize handler
+      this._onResizeHandler = () => {
+        if (!this._canvas) return;
+        const rect = el.getBoundingClientRect();
+        this._canvas.width = rect.width;
+        this._canvas.height = rect.height;
+      };
+      window.addEventListener('resize', this._onResizeHandler);
+
+      render();
+      console.debug('LoginComponent: canvas snow fallback initialized');
+    } catch (err) {
+      console.warn('Failed to initialize canvas snow fallback', err);
+    }
+  }
+
+  private _destroyCanvasSnow() {
+    if (this._snowRafId) {
+      cancelAnimationFrame(this._snowRafId);
+      this._snowRafId = undefined;
+    }
+    if (this._onResizeHandler) {
+      window.removeEventListener('resize', this._onResizeHandler);
+      this._onResizeHandler = null;
+    }
+    if (this._canvas && this.snowRoot?.nativeElement.contains(this._canvas)) {
+      try { this.snowRoot.nativeElement.removeChild(this._canvas); } catch (e) { /* ignore */ }
+    }
+    this._canvas = undefined;
+    this._particles = [];
+  }
 
   get errorMessage() {
     return this.error?.error?.message || this.error?.message || (this.error && this.error.toString()) || null;
