@@ -12,7 +12,7 @@ const siswaSchema = new mongoose.Schema(
       type: String,
     },
 
-    no_telp: {
+    gambar: {
       type: String,
     },
 
@@ -25,11 +25,12 @@ const siswaSchema = new mongoose.Schema(
       type: Date,
     },
 
-    kelas_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Kelas",
-      required: true,
-    },
+    kelas: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Kelas",
+      },
+    ],
   },
   { timestamps: true }
 );

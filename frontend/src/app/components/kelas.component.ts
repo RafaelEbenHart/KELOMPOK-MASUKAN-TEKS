@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders, HttpClientModule } from '@angular/common/http';
 import { AuthService } from '../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-kelas',
@@ -26,6 +27,10 @@ import { AuthService } from '../services/auth.service';
               <p class="small text-muted mb-0">Pengajar: {{ k.pengajar_id?.name || k.pengajar_id?.email || '-' }}</p>
               <p class="small text-muted">Dibuat: {{ k.createdAt | date:'medium' }}</p>
             </div>
+            <div *ngIf="isAdmin()" class="card-footer bg-transparent border-0 d-flex gap-2">
+              <button class="btn btn-sm btn-outline-primary" (click)="editKelas(k._id)">✏️ Edit</button>
+              <button class="btn btn-sm btn-outline-danger" (click)="deleteKelas(k._id)">🗑️ Hapus</button>
+            </div>
           </div>
         </div>
       </div>
@@ -45,10 +50,20 @@ export class KelasComponent implements OnInit {
 
   private readonly BASE = 'http://localhost:5000/api/kelas';
 
-  constructor(private http: HttpClient, private auth: AuthService) {}
+  constructor(private http: HttpClient, private auth: AuthService, private router: Router) {}
 
   ngOnInit() {
     this.fetchKelas();
+  }
+
+  isAdmin() {
+    try {
+      const raw = localStorage.getItem('km_user');
+      const user = raw ? JSON.parse(raw) : null;
+      return (user?.role || '').toLowerCase() === 'admin';
+    } catch (e) {
+      return false;
+    }
   }
 
   fetchKelas() {
@@ -89,6 +104,20 @@ export class KelasComponent implements OnInit {
         this.error = err?.error?.message || 'Gagal memuat data kelas.';
         this.loading = false;
       }
+    });
+  }
+
+  editKelas(id: string) {
+    this.router.navigate(['/kelas'], { queryParams: { edit: id } });
+  }
+
+  deleteKelas(id: string) {
+    if (!confirm('Hapus kelas ini?')) return;
+    const token = this.auth.getToken();
+    const headers = token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : undefined as any;
+    this.http.delete(`${this.BASE}/${id}`, { headers }).subscribe({
+      next: () => this.fetchKelas(),
+      error: (err) => alert(err?.error?.message || 'Gagal menghapus kelas')
     });
   }
 }
