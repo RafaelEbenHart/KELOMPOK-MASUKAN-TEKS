@@ -21,7 +21,7 @@ import { AuthService } from '../services/auth.service';
         <form (ngSubmit)="submit()">
           <div class="mb-3">
             <label class="form-label">Hari</label>
-            <select class="form-select" [(ngModel)]="form.hari" name="hari" required>
+            <select class="form-select" [(ngModel)]="form.hari" (ngModelChange)="onChange()" name="hari" required>
               <option value="">Pilih Hari</option>
               <option *ngFor="let h of hariOptions" [value]="h">{{ h }}</option>
             </select>
@@ -30,17 +30,17 @@ import { AuthService } from '../services/auth.service';
           <div class="mb-3 row">
             <div class="col">
               <label class="form-label">Jam Mulai</label>
-              <input class="form-control" type="time" [(ngModel)]="form.jamMulai" name="jamMulai" required />
+              <input class="form-control" type="time" [(ngModel)]="form.jamMulai" (ngModelChange)="onChange()" name="jamMulai" required />
             </div>
             <div class="col">
               <label class="form-label">Jam Selesai</label>
-              <input class="form-control" type="time" [(ngModel)]="form.jamSelesai" name="jamSelesai" required />
+              <input class="form-control" type="time" [(ngModel)]="form.jamSelesai" (ngModelChange)="onChange()" name="jamSelesai" required />
             </div>
           </div>
 
           <div class="mb-3">
             <label class="form-label">Pengajar (terkunci)</label>
-            <select class="form-select" [(ngModel)]="form.pengajar" name="pengajar" required disabled>
+            <select class="form-select" [(ngModel)]="form.pengajar" (ngModelChange)="onChange()" name="pengajar" required disabled>
               <option *ngIf="!pengajarList.length" value="">Pengajar tidak tersedia</option>
               <option *ngFor="let p of pengajarList" [value]="p._id">{{ p.name || p.email }}</option>
             </select>
@@ -126,10 +126,16 @@ export class TambahJadwalComponent implements OnInit {
       kelas: this.form.kelas
     }, { headers }).subscribe({
       next: () => this.router.navigate(['/kelas', this.form.kelas]),
-      error: (err) => { this.error = err?.error?.message || 'Gagal menambahkan jadwal.'; console.error(err); },
+      error: (err) => { this.error = err?.error?.message || 'Gagal menambahkan jadwal.'; console.error(err); this.submitting = false; },
       complete: () => (this.submitting = false)
     });
   }
 
   goBack() { this.router.navigate(['/kelas', this.form.kelas || '']); }
+
+  // Clear error and allow re-submit when user changes input after a failure
+  onChange() {
+    this.error = null;
+    this.submitting = false;
+  }
 }

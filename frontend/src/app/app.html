@@ -8,6 +8,13 @@
   /* Ensure routed content and global containers don't cause horizontal scroll */
   main, .card-body, .container-fluid { overflow-x: hidden; }
 
+  /* collapse arrow for sidebar dropdowns */
+  .collapse-arrow { margin-left: .5rem; font-size: .9rem; display:inline-block; transition: transform .18s ease; transform-origin: center; transform: rotate(0deg); }
+  .collapse-arrow.open { transform: rotate(180deg); }
+  /* invert variant: default rotated, open -> unrotate */
+  .collapse-arrow.invert { transform: rotate(180deg); }
+  .collapse-arrow.invert.open { transform: rotate(0deg); }
+
   /* logout confirmation modal */
   .logout-overlay {
     position: fixed;
@@ -100,8 +107,9 @@
 
       <!-- Kelas dropdown -->
         <div>
-          <a class="nav-link text-white py-2" data-bs-toggle="collapse" href="#kelasCollapse" role="button" aria-expanded="false" aria-controls="kelasCollapse">
-            Kelas
+          <a class="nav-link text-white py-2 d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#kelasCollapse" role="button" (click)="toggleKelas()" [attr.aria-expanded]="kelasOpen" aria-controls="kelasCollapse">
+            <span>Kelas</span>
+            <span class="collapse-arrow" [class.open]="kelasOpen">▾</span>
           </a>
 
           <div class="collapse" id="kelasCollapse">
@@ -114,8 +122,9 @@
 
         <!-- Siswa dropdown -->
         <div class="mt-2">
-          <a class="nav-link text-white py-2" data-bs-toggle="collapse" href="#siswaCollapse" role="button" aria-expanded="false" aria-controls="siswaCollapse">
-            Siswa
+          <a class="nav-link text-white py-2 d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#siswaCollapse" role="button" (click)="toggleSiswa()" [attr.aria-expanded]="siswaOpen" aria-controls="siswaCollapse">
+            <span>Siswa</span>
+            <span class="collapse-arrow" [class.open]="siswaOpen">▾</span>
           </a>
 
           <div class="collapse" id="siswaCollapse">
@@ -128,8 +137,9 @@
 
         <!-- Pengajar dropdown (admin only) -->
         <div *ngIf="isAdmin()" class="mt-2">
-          <a class="nav-link text-white py-2" data-bs-toggle="collapse" href="#pengajarCollapse" role="button" aria-expanded="false" aria-controls="pengajarCollapse">
-            Pengajar
+          <a class="nav-link text-white py-2 d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#pengajarCollapse" role="button" (click)="togglePengajar()" [attr.aria-expanded]="pengajarOpen" aria-controls="pengajarCollapse">
+            <span>Pengajar</span>
+            <span class="collapse-arrow" [class.open]="pengajarOpen">▾</span>
           </a>
 
           <div class="collapse" id="pengajarCollapse">
