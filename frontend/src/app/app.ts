@@ -19,6 +19,11 @@ export class App {
   animateRoute = false;
   showLogoutConfirm = false;
 
+  // Sidebar dropdown open state (used to flip the arrows)
+  kelasOpen = false;
+  siswaOpen = false;
+  pengajarOpen = false;
+
   // Global confirm modal (used by child components via event)
   showGlobalConfirm = false;
   globalConfirmTitle = '';
@@ -152,6 +157,11 @@ export class App {
     }
     this.cancelGlobalConfirm();
   }
+
+  // Toggle handlers for sidebar dropdown arrows
+  toggleKelas() { this.kelasOpen = !this.kelasOpen; }
+  toggleSiswa() { this.siswaOpen = !this.siswaOpen; }
+  togglePengajar() { this.pengajarOpen = !this.pengajarOpen; }
 
   // Actions exposed to template
   editKelas(id: string) {
