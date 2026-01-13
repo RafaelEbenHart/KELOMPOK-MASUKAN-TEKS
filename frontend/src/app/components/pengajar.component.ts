@@ -25,7 +25,10 @@ import { Router } from '@angular/router';
           </div>
           <div *ngIf="isAdmin()" class="d-flex gap-2">
             <!-- Edit route could be added later -->
-            <button class="btn btn-sm btn-outline-danger" (click)="deletePengajar(p._id)">Hapus</button>
+            <button class="btn btn-sm btn-outline-danger" (click)="requestDelete(p._id)">
+                Hapus
+            </button>
+
           </div>
         </div>
       </div>
@@ -72,4 +75,24 @@ export class PengajarComponent implements OnInit {
       error: (err) => alert(err?.error?.message || 'Gagal menghapus pengajar')
     });
   }
+    // delete request is delegated to global confirm modal via custom event
+  requestDelete(id: string) {
+    const onConfirm = () => {
+      const token = this.auth.getToken();
+      const headers = token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : undefined as any;
+      this.http.delete(`${this.BASE}/${id}`, { headers }).subscribe({
+        next: () => this.fetchPengajar(),
+        error: (err) => alert(err?.error?.message || 'Gagal menghapus kelas')
+      });
+    };
+
+    window.dispatchEvent(new CustomEvent('km:confirm', {
+      detail: {
+        title: 'Konfirmasi Hapus',
+        message: 'Apakah Anda yakin ingin menghapus pengajar ini?',
+        onConfirm
+      }
+    }));
+  }
 }
+

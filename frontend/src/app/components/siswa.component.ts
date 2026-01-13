@@ -41,7 +41,10 @@ import { FormsModule } from '@angular/forms';
           </div>
           <div *ngIf="isAdmin()" class="d-flex gap-2">
             <button class="btn btn-sm btn-outline-primary" (click)="editSiswa(s._id)">Edit</button>
-            <button class="btn btn-sm btn-outline-danger" (click)="deleteSiswa(s._id)">Hapus</button>
+          <button class="btn btn-sm btn-outline-danger" (click)="requestDelete(s._id)">
+            Hapus
+          </button>
+
           </div>
         </div>
       </div>
@@ -238,5 +241,24 @@ export class SiswaComponent implements OnInit {
     // normalize backslashes and ensure leading slash
     const p = path.replace(/\\/g, '/').replace(/^\//, '');
     return `http://localhost:5000/${p}`;
+  }
+  // delete request is delegated to global confirm modal via custom event
+  requestDelete(id: string) {
+    const onConfirm = () => {
+      const token = this.auth.getToken();
+      const headers = token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : undefined as any;
+      this.http.delete(`${this.BASE}/${id}`, { headers }).subscribe({
+        next: () => this.fetchSiswa(),
+        error: (err) => alert(err?.error?.message || 'Gagal menghapus kelas')
+      });
+    };
+
+    window.dispatchEvent(new CustomEvent('km:confirm', {
+      detail: {
+        title: 'Konfirmasi Hapus',
+        message: 'Apakah Anda yakin ingin menghapus siswa ini?',
+        onConfirm
+      }
+    }));
   }
 }

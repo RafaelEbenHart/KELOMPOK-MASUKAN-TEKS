@@ -88,14 +88,16 @@ export const updateSiswa = async (req, res) => {
 // DELETE SISWA
 export const deleteSiswa = async (req, res) => {
   try {
-    const siswa = await Siswa.findById(req.params.id);
-    if (!siswa) return res.status(404).json({ message: "Siswa tidak ditemukan" });
+    const siswa = await Siswa.findByIdAndDelete(req.params.id);
+
+    if (!siswa) {
+      return res.status(404).json({ message: "Siswa tidak ditemukan" });
+    }
 
     if (siswa.gambar && fs.existsSync(siswa.gambar)) {
       fs.unlinkSync(siswa.gambar);
     }
 
-    await siswa.remove();
     res.json({ message: "Siswa berhasil dihapus" });
   } catch (error) {
     res.status(500).json({ message: error.message });
